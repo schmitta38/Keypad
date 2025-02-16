@@ -166,7 +166,7 @@ void Keypad::nextKeyState(byte idx, boolean button) {
 			break;
 		case HOLD:
 			if (button==OPEN)
-				transitionTo (idx, RELEASED);
+				transitionTo (idx, HOLD_RELEASED);
 			break;
 		case RELEASED:
 			transitionTo (idx, IDLE);
@@ -179,6 +179,16 @@ bool Keypad::isPressed(char keyChar) {
 	for (byte i=0; i<LIST_MAX; i++) {
 		if ( key[i].kchar == keyChar ) {
 			if ( (key[i].kstate == PRESSED) && key[i].stateChanged )
+				return true;
+		}
+	}
+	return false;	// Not pressed.
+}
+
+bool Keypad::isActive(char keyChar) {
+	for (byte i=0; i<LIST_MAX; i++) {
+		if ( key[i].kchar == keyChar ) {
+			if ( (key[i].kstate == PRESSED) && (key[i].kstate == HOLD) )
 				return true;
 		}
 	}
