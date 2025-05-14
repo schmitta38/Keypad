@@ -33,7 +33,14 @@
 #ifndef KEYPAD_H
 #define KEYPAD_H
 
-#include "Key.h"
+#include "utility/Key.h"
+
+// Arduino versioning.
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h"
+#endif
 
 // bperrybap - Thanks for a well reasoned argument and the following macro(s).
 // See http://arduino.cc/forum/index.php/topic,142041.msg1069480.html#msg1069480
@@ -62,11 +69,11 @@ typedef unsigned long ulong;
 // Made changes according to this post http://arduino.cc/forum/index.php?topic=58337.0
 // by Nick Gammon. Thanks for the input Nick. It actually saved 78 bytes for me. :)
 typedef struct {
-    byte rows;
-    byte columns;
+    uint8_t rows;
+    uint8_t columns;
 } KeypadSize;
 
-#define LIST_MAX 10		// Max number of keys on the active list.
+#define LIST_MAX 12		// Max number of keys on the active list.
 #define MAPSIZE 10		// MAPSIZE is the number of rows (times 16 columns)
 #define makeKeymap(x) ((char*)x)
 
@@ -75,11 +82,11 @@ typedef struct {
 class Keypad : public Key {
 public:
 
-	Keypad(char *userKeymap, byte *row, byte *col, byte numRows, byte numCols);
+	Keypad(char *userKeymap, uint8_t *row, uint8_t *col, uint8_t numRows, uint8_t numCols);
 
-	virtual void pin_mode(byte pinNum, byte mode) { pinMode(pinNum, mode); }
-	virtual void pin_write(byte pinNum, boolean level) { digitalWrite(pinNum, level); }
-	virtual int  pin_read(byte pinNum) { return digitalRead(pinNum); }
+	virtual void pin_mode(uint8_t pinNum, uint8_t mode) { pinMode(pinNum, mode); }
+	virtual void pin_write(uint8_t pinNum, boolean level) { digitalWrite(pinNum, level); }
+	virtual int  pin_read(uint8_t pinNum) { return digitalRead(pinNum); }
 
 	uint bitMap[MAPSIZE];	// 10 row x 16 column array of bits. Except Due which has 32 columns.
 	Key key[LIST_MAX];
@@ -91,6 +98,7 @@ public:
 	void begin(char *userKeymap);
 	bool isPressed(char keyChar);
 	bool isActive(char keyChar);
+	uint8_t getStatus(char keyChar);
 	void setDebounceTime(uint);
 	void setHoldTime(uint);
 	void addEventListener(void (*listener)(char));
@@ -98,13 +106,13 @@ public:
 	int findInList(int keyCode);
 	char waitForKey();
 	bool keyStateChanged();
-	byte numKeys();
+	uint8_t numKeys();
 
 private:
 	unsigned long startTime;
 	char *keymap;
-    byte *rowPins;
-    byte *columnPins;
+    uint8_t *rowPins;
+    uint8_t *columnPins;
 	KeypadSize sizeKpd;
 	uint debounceTime;
 	uint holdTime;
@@ -112,8 +120,8 @@ private:
 
 	void scanKeys();
 	bool updateList();
-	void nextKeyState(byte n, boolean button);
-	void transitionTo(byte n, KeyState nextState);
+	void nextKeyState(uint8_t n, boolean button);
+	void transitionTo(uint8_t n, KeyState nextState);
 	void (*keypadEventListener)(char);
 };
 
