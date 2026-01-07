@@ -83,7 +83,15 @@ bool Keypad::getKeys() {
 void Keypad::scanKeys() {
 	// Re-intialize the row pins. Allows sharing these pins with other hardware.
 	for (uint8_t r=0; r<sizeKpd.rows; r++) {
-		pin_mode(rowPins[r],INPUT_PULLUP);
+	  #ifdef ESP32_GPIO
+	  if (rowPins[r] < 34) {
+	    pin_mode(rowPins[r],INPUT_PULLUP);
+	  } else {
+	    pin_mode(rowPins[r],INPUT);
+	  }
+	  #else
+	  pin_mode(rowPins[r],INPUT_PULLUP);
+	  #endif
 	}
 
 	// bitMap stores ALL the keys that are being pressed.

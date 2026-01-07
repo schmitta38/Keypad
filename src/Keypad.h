@@ -34,6 +34,7 @@
 #define KEYPAD_H
 
 #include "Key.h"
+#define ESP32_GPIO
 
 // Arduino versioning.
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -73,8 +74,10 @@ typedef struct {
     uint8_t columns;
 } KeypadSize;
 
-#define LIST_MAX 12		// Max number of keys on the active list.
-#define MAPSIZE 10		// MAPSIZE is the number of rows (times 16 columns)
+#define LIST_MAX 16		// Max number of keys on the active list.
+//#define LIST_MAX 12		// Max number of keys on the active list.
+//#define MAPSIZE 10		// MAPSIZE is the number of rows (times 16 columns)
+#define MAPSIZE 5		// MAPSIZE is the number of rows (times 16 columns)
 #define makeKeymap(x) ((char*)x)
 
 
