@@ -46,6 +46,7 @@ Keypad::Keypad(char *userKeymap, uint8_t *row, uint8_t *col, uint8_t numRows, ui
 
 	startTime = 0;
 	single_key = false;
+	externalPullup = false;
 }
 
 // Let the user define a keymap - assume the same row/column count as defined in constructor
@@ -83,15 +84,11 @@ bool Keypad::getKeys() {
 void Keypad::scanKeys() {
 	// Re-intialize the row pins. Allows sharing these pins with other hardware.
 	for (uint8_t r=0; r<sizeKpd.rows; r++) {
-	  #ifdef ESP32_GPIO
-	  if (rowPins[r] < 34) {
-	    pin_mode(rowPins[r],INPUT_PULLUP);
-	  } else {
+	  if (externalPullup && rowPins[r] >= 34) {
 	    pin_mode(rowPins[r],INPUT);
+	  } else {
+	    pin_mode(rowPins[r],INPUT_PULLUP);
 	  }
-	  #else
-	  pin_mode(rowPins[r],INPUT_PULLUP);
-	  #endif
 	}
 
 	// bitMap stores ALL the keys that are being pressed.
@@ -257,6 +254,11 @@ KeyState Keypad::getState() {
 bool Keypad::keyStateChanged() {
 	return key[0].stateChanged;
 }
+
+void Keypad::esp32ExternalPullup(boolean mode) {
+	externalPullup = mode;
+}
+
 
 // The number of keys on the key list, key[LIST_MAX], equals the number
 // of bytes in the key list divided by the number of bytes in a Key object.

@@ -34,7 +34,6 @@
 #define KEYPAD_H
 
 #include "Key.h"
-#define ESP32_GPIO
 
 // Arduino versioning.
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -109,6 +108,7 @@ public:
 	int findInList(int keyCode);
 	char waitForKey();
 	bool keyStateChanged();
+	void esp32ExternalPullup(boolean mode);
 	uint8_t numKeys();
 
 private:
@@ -120,6 +120,7 @@ private:
 	uint debounceTime;
 	uint holdTime;
 	bool single_key;
+	bool externalPullup;
 
 	void scanKeys();
 	bool updateList();
